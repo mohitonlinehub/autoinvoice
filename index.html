@@ -4,8 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto Invoice</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h1>Auto Invoice</h1>
+    <!-- Login View -->
+    <div id="loginView" class="view hidden">
+        <div class="login-container">
+            <form id="loginForm">
+                <div class="form-group username-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                
+                <div class="form-group password-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin View -->
+    <div id="adminView" class="view hidden">
+        <div class="header">
+            <span>Welcome, <span id="adminUsername"></span></span>
+            <button id="adminLogoutBtn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Agent View -->
+    <div id="agentView" class="view hidden">
+        <div class="header">
+            <span>Welcome, <span id="agentUsername"></span></span>
+            <button id="agentLogoutBtn">Logout</button>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>
