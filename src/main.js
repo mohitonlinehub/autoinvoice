@@ -17,6 +17,7 @@ function showView(viewId, username = '') {
             document.getElementById('adminUsername').textContent = username;
             refreshAgentList();
             refreshProductList();
+            refreshCompanyList();
         } else if (viewId === 'agentView') {
             document.getElementById('agentUsername').textContent = username;
         }
@@ -166,5 +167,59 @@ async function refreshProductList() {
         
     } catch (error) {
         console.error('Failed to fetch products:', error);
+    }
+}
+
+// Create Company Form Handler
+if (document.getElementById('createCompanyForm')) {
+    document.getElementById('createCompanyForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('companyName').value;
+        const address = document.getElementById('companyAddress').value;
+        const mobile = document.getElementById('companyMobile').value;
+        const email = document.getElementById('companyEmail').value;
+        const website = document.getElementById('companyWebsite').value;
+        
+        try {
+            const record = await pb.collection('companies').create({
+                name,
+                address,
+                mobile,
+                email,
+                website
+            });
+            
+            console.log('Company created successfully:', record);
+            alert('Company created successfully!');
+            
+            e.target.reset();
+            refreshCompanyList();
+            
+        } catch (error) {
+            console.error('Failed to create company:', error.data);
+            alert('Failed to create company. Please try again.');
+        }
+    });
+}
+
+// Function to fetch and display companies
+async function refreshCompanyList() {
+    try {
+        const records = await pb.collection('companies').getList(1, 50, {
+            sort: '-created'
+        });
+        
+        const companyList = document.getElementById('companyList');
+        companyList.innerHTML = ''; // Clear current list
+        
+        records.items.forEach(company => {
+            const li = document.createElement('li');
+            li.textContent = `${company.name} - ${company.email} - ${company.mobile}`;
+            companyList.appendChild(li);
+        });
+        
+    } catch (error) {
+        console.error('Failed to fetch companies:', error);
     }
 }
