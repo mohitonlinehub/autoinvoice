@@ -56,6 +56,30 @@
             <h4>Current Agents</h4>
             <ul id="agentList"></ul>
         </div>
+        
+        <!-- Product Section -->
+        <div class="create-product-section">
+            <h2>Create New Product</h2>
+            <form id="createProductForm">
+                <div class="form-group name-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName" required>
+                </div>
+                
+                <div class="form-group price-group">
+                    <label for="productPrice">ProductPrice</label>
+                    <input type="number" id="productPrice" min="0" required>
+                </div>
+                
+                <button type="submit">Create Product</button>
+            </form>
+        </div>
+        
+        <!-- Product List Section -->
+        <div class="product-list-section">
+            <h4>Current Products</h4>
+            <ul id="productList"></ul>
+        </div>
     </div>
 
     <!-- Agent View -->

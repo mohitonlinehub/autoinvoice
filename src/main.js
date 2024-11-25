@@ -16,6 +16,7 @@ function showView(viewId, username = '') {
         if (viewId === 'adminView') {
             document.getElementById('adminUsername').textContent = username;
             refreshAgentList();
+            refreshProductList();
         } else if (viewId === 'agentView') {
             document.getElementById('agentUsername').textContent = username;
         }
@@ -117,5 +118,53 @@ async function refreshAgentList() {
         
     } catch (error) {
         console.error('Failed to fetch agents:', error);
+    }
+}
+
+// Create Product Form Handler
+if (document.getElementById('createProductForm')) {
+    document.getElementById('createProductForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('productName').value;
+        const price = parseFloat(document.getElementById('productPrice').value);
+        
+        try {
+            const record = await pb.collection('products').create({
+                name,
+                price
+            });
+            
+            console.log('Product created successfully:', record);
+            alert('Product created successfully!');
+            
+            e.target.reset();
+            refreshProductList();
+            
+        } catch (error) {
+            console.error('Failed to create product:', error);
+            alert('Failed to create product. Please try again.');
+        }
+    });
+}
+
+// Function to fetch and display products
+async function refreshProductList() {
+    try {
+        const records = await pb.collection('products').getList(1, 50, {
+            sort: '-created'
+        });
+        
+        const productList = document.getElementById('productList');
+        productList.innerHTML = ''; // Clear current list
+        
+        records.items.forEach(product => {
+            const li = document.createElement('li');
+            li.textContent = `${product.name} - ₹${product.price.toFixed(2)}`;
+            productList.appendChild(li);
+        });
+        
+    } catch (error) {
+        console.error('Failed to fetch products:', error);
     }
 }
