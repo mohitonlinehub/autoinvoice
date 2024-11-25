@@ -67,3 +67,31 @@ loginForm.addEventListener('submit', async (e) => {
         showView('loginView');
     });
 });
+
+// Create Agent Form Handler
+if (document.getElementById('createAgentForm')) {
+    document.getElementById('createAgentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const username = document.getElementById('newAgentUsername').value;
+        const password = document.getElementById('newAgentPassword').value;
+        
+        try {
+            const record = await pb.collection('users').create({
+                username,
+                password,
+                passwordConfirm: password,
+                role: "agent"
+            });
+            
+            console.log('Agent created successfully:', record);
+            alert('Agent created successfully!');
+            
+            e.target.reset();
+            
+        } catch (error) {
+            console.error('Failed to create agent:', error);
+            alert('Failed to create agent. Please try again.');
+        }
+    });
+}

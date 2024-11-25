@@ -32,6 +32,24 @@
             <span>Welcome, <span id="adminUsername"></span></span>
             <button id="adminLogoutBtn">Logout</button>
         </div>
+        
+        <!-- Add Agent Form -->
+        <div class="create-agent-section">
+            <h2>Create New Agent</h2>
+            <form id="createAgentForm">
+                <div class="form-group username-group">
+                    <label for="newAgentUsername">Agent Username</label>
+                    <input type="text" id="newAgentUsername" required>
+                </div>
+                
+                <div class="form-group password-group">
+                    <label for="newAgentPassword">Agent Password</label>
+                    <input type="password" id="newAgentPassword" required>
+                </div>
+                
+                <button type="submit">Create Agent</button>
+            </form>
+        </div>
     </div>
 
     <!-- Agent View -->
