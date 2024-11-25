@@ -15,6 +15,7 @@ function showView(viewId, username = '') {
     if (username) {
         if (viewId === 'adminView') {
             document.getElementById('adminUsername').textContent = username;
+            refreshAgentList();
         } else if (viewId === 'agentView') {
             document.getElementById('agentUsername').textContent = username;
         }
@@ -88,10 +89,33 @@ if (document.getElementById('createAgentForm')) {
             alert('Agent created successfully!');
             
             e.target.reset();
+            refreshAgentList();
             
         } catch (error) {
             console.error('Failed to create agent:', error);
             alert('Failed to create agent. Please try again.');
         }
     });
+}
+
+// Function to fetch and display agents
+async function refreshAgentList() {
+    try {
+        const records = await pb.collection('users').getList(1, 50, {
+            filter: 'role = "agent"',
+            sort: '-created'
+        });
+        
+        const agentList = document.getElementById('agentList');
+        agentList.innerHTML = ''; // Clear current list
+        
+        records.items.forEach(agent => {
+            const li = document.createElement('li');
+            li.textContent = agent.username;
+            agentList.appendChild(li);
+        });
+        
+    } catch (error) {
+        console.error('Failed to fetch agents:', error);
+    }
 }
