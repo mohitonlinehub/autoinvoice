@@ -115,7 +115,40 @@ async function refreshAgentList() {
         
         records.items.forEach(agent => {
             const li = document.createElement('li');
-            li.textContent = agent.username;
+            li.className = 'agent-item';
+            
+            // Agent info
+            const agentInfo = document.createElement('span');
+            agentInfo.textContent = agent.username;
+            
+            // Edit button
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.className = 'edit-btn';
+            editBtn.onclick = () => {
+                console.log('Edit button clicked for agent:', agent); // Debug log
+                showEditAgentModal(agent);
+            };
+            
+            // Delete button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.onclick = async () => {
+                if (confirm(`Are you sure you want to delete agent ${agent.username}?`)) {
+                    try {
+                        await pb.collection('users').delete(agent.id);
+                        refreshAgentList();
+                    } catch (error) {
+                        console.error('Failed to delete agent:', error);
+                        alert('Failed to delete agent. Please try again.');
+                    }
+                }
+            };
+            
+            li.appendChild(agentInfo);
+            li.appendChild(editBtn);
+            li.appendChild(deleteBtn);
             agentList.appendChild(li);
         });
         
@@ -123,6 +156,84 @@ async function refreshAgentList() {
         console.error('Failed to fetch agents:', error);
     }
 }
+
+// Function to show edit agent modal
+function showEditAgentModal(agent) {
+    console.log('Opening modal for agent:', agent); // Debug log
+    
+    const modal = document.getElementById('editAgentModal');
+    console.log('Modal element:', modal); // Debug log
+    
+    const usernameInput = document.getElementById('editAgentUsername');
+    console.log('Username input:', usernameInput); // Debug log
+    
+    const passwordInput = document.getElementById('editAgentPassword');
+    console.log('Password input:', passwordInput); // Debug log
+    
+    if (!modal || !usernameInput || !passwordInput) {
+        console.error('Modal elements not found');
+        return;
+    }
+    
+    try {
+        usernameInput.value = agent.username;
+        passwordInput.value = '';
+        modal.dataset.agentId = agent.id;
+        modal.classList.remove('hidden');
+        console.log('Modal should be visible now'); // Debug log
+    } catch (error) {
+        console.error('Error in showEditAgentModal:', error); // Debug log
+    }
+}
+
+// Move these event listeners outside any conditional blocks and add them when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Edit Agent Form Handler
+    const editAgentForm = document.getElementById('editAgentForm');
+    if (editAgentForm) {
+        editAgentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const modal = document.getElementById('editAgentModal');
+            const agentId = modal.dataset.agentId;
+            const username = document.getElementById('editAgentUsername').value;
+            const password = document.getElementById('editAgentPassword').value;
+            
+            try {
+                const data = { username };
+                if (password) {
+                    data.password = password;
+                    data.passwordConfirm = password;
+                }
+                
+                await pb.collection('users').update(agentId, data);
+                alert('Agent updated successfully!');
+                
+                modal.classList.add('hidden');
+                refreshAgentList();
+                
+            } catch (error) {
+                console.error('Failed to update agent:', error);
+                alert('Failed to update agent. Please try again.');
+            }
+        });
+    }
+    
+    // Modal close handler
+    const modal = document.getElementById('editAgentModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    }
+    
+    // Cancel button handler
+    document.getElementById('cancelEditAgent')?.addEventListener('click', () => {
+        document.getElementById('editAgentModal').classList.add('hidden');
+    });
+});
 
 // Create Product Form Handler
 if (document.getElementById('createProductForm')) {
