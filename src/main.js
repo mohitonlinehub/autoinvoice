@@ -173,6 +173,46 @@ async function refreshProductList() {
 
 // Create Company Form Handler
 if (document.getElementById('createCompanyForm')) {
+    // Populate dropdowns when company form loads
+    async function populateCompanyDropdowns() {
+        try {
+            // Fetch banks
+            const banks = await pb.collection('banks').getList(1, 50);
+            const bankSelect = document.getElementById('companyBanks');
+            bankSelect.innerHTML = '';
+            banks.items.forEach(bank => {
+                const option = new Option(`${bank.name} - ${bank.account}`, bank.id);
+                bankSelect.appendChild(option);
+            });
+            
+            // Fetch products
+            const products = await pb.collection('products').getList(1, 50);
+            const productSelect = document.getElementById('companyProducts');
+            productSelect.innerHTML = '';
+            products.items.forEach(product => {
+                const option = new Option(`${product.name} - ₹${product.price}`, product.id);
+                productSelect.appendChild(option);
+            });
+            
+            // Fetch agents
+            const agents = await pb.collection('users').getList(1, 50, {
+                filter: 'role = "agent"'
+            });
+            const agentSelect = document.getElementById('companyAgents');
+            agentSelect.innerHTML = '';
+            agents.items.forEach(agent => {
+                const option = new Option(agent.username, agent.id);
+                agentSelect.appendChild(option);
+            });
+            
+        } catch (error) {
+            console.error('Failed to populate dropdowns:', error);
+        }
+    }
+    
+    populateCompanyDropdowns();
+    
+    // Update company form handler
     document.getElementById('createCompanyForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -182,13 +222,21 @@ if (document.getElementById('createCompanyForm')) {
         const email = document.getElementById('companyEmail').value;
         const website = document.getElementById('companyWebsite').value;
         
+        // Get selected values from dropdowns
+        const banks = Array.from(document.getElementById('companyBanks').selectedOptions).map(opt => opt.value);
+        const products = Array.from(document.getElementById('companyProducts').selectedOptions).map(opt => opt.value);
+        const agents = Array.from(document.getElementById('companyAgents').selectedOptions).map(opt => opt.value);
+        
         try {
             const record = await pb.collection('companies').create({
                 name,
                 address,
                 mobile,
                 email,
-                website
+                website,
+                banks,
+                products,
+                agents
             });
             
             console.log('Company created successfully:', record);
@@ -216,7 +264,7 @@ async function refreshCompanyList() {
         
         records.items.forEach(company => {
             const li = document.createElement('li');
-            li.textContent = `${company.name} - ${company.email} - ${company.mobile}`;
+            li.textContent = `${company.name} - ${company.address} - ${company.mobile}`;
             companyList.appendChild(li);
         });
         
