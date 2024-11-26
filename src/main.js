@@ -556,7 +556,34 @@ async function refreshBankList() {
         
         records.items.forEach(bank => {
             const li = document.createElement('li');
-            li.textContent = `${bank.name} - A/C: ${bank.account} - IFSC: ${bank.ifsc}`;
+            
+            // Bank info
+            const bankInfo = document.createElement('span');
+            bankInfo.textContent = `${bank.name} - A/C: ${bank.account} - IFSC: ${bank.ifsc}`;
+            
+            // Edit button
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.onclick = () => showEditBankModal(bank);
+            
+            // Delete button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.onclick = async () => {
+                if (confirm(`Are you sure you want to delete bank ${bank.name}?`)) {
+                    try {
+                        await pb.collection('banks').delete(bank.id);
+                        refreshBankList();
+                    } catch (error) {
+                        console.error('Failed to delete bank:', error);
+                        alert('Failed to delete bank. Please try again.');
+                    }
+                }
+            };
+            
+            li.appendChild(bankInfo);
+            li.appendChild(editBtn);
+            li.appendChild(deleteBtn);
             bankList.appendChild(li);
         });
         
@@ -564,3 +591,56 @@ async function refreshBankList() {
         console.error('Failed to fetch banks:', error);
     }
 }
+
+// Function to show edit bank modal
+function showEditBankModal(bank) {
+    const modal = document.getElementById('editBankModal');
+    const nameInput = document.getElementById('editBankName');
+    const accountInput = document.getElementById('editBankAccount');
+    const ifscInput = document.getElementById('editBankIFSC');
+    
+    nameInput.value = bank.name;
+    accountInput.value = bank.account;
+    ifscInput.value = bank.ifsc;
+    modal.dataset.bankId = bank.id;
+    
+    modal.classList.remove('hidden');
+}
+
+// Add these to your DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', () => {
+    // Edit Bank Form Handler
+    const editBankForm = document.getElementById('editBankForm');
+    if (editBankForm) {
+        editBankForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const modal = document.getElementById('editBankModal');
+            const bankId = modal.dataset.bankId;
+            const name = document.getElementById('editBankName').value;
+            const account = document.getElementById('editBankAccount').value;
+            const ifsc = document.getElementById('editBankIFSC').value;
+            
+            try {
+                await pb.collection('banks').update(bankId, {
+                    name,
+                    account,
+                    ifsc
+                });
+                
+                alert('Bank updated successfully!');
+                modal.classList.add('hidden');
+                refreshBankList();
+                
+            } catch (error) {
+                console.error('Failed to update bank:', error);
+                alert('Failed to update bank. Please try again.');
+            }
+        });
+    }
+    
+    // Cancel button handler for bank modal
+    document.getElementById('cancelEditBank')?.addEventListener('click', () => {
+        document.getElementById('editBankModal').classList.add('hidden');
+    });
+});
