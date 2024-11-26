@@ -274,7 +274,34 @@ async function refreshProductList() {
         
         records.items.forEach(product => {
             const li = document.createElement('li');
-            li.textContent = `${product.name} - ₹${product.price.toFixed(2)}`;
+            
+            // Product info
+            const productInfo = document.createElement('span');
+            productInfo.textContent = `${product.name} - ₹${product.price.toFixed(2)}`;
+            
+            // Edit button
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.onclick = () => showEditProductModal(product);
+            
+            // Delete button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.onclick = async () => {
+                if (confirm('Are you sure you want to delete this product?')) {
+                    try {
+                        await pb.collection('products').delete(product.id);
+                        refreshProductList();
+                    } catch (error) {
+                        console.error('Failed to delete product:', error);
+                        alert('Failed to delete product. Please try again.');
+                    }
+                }
+            };
+            
+            li.appendChild(productInfo);
+            li.appendChild(editBtn);
+            li.appendChild(deleteBtn);
             productList.appendChild(li);
         });
         
@@ -282,6 +309,55 @@ async function refreshProductList() {
         console.error('Failed to fetch products:', error);
     }
 }
+
+// Function to show edit product modal
+function showEditProductModal(product) {
+    const modal = document.getElementById('editProductModal');
+    const nameInput = document.getElementById('editProductName');
+    const priceInput = document.getElementById('editProductPrice');
+    
+    nameInput.value = product.name;
+    priceInput.value = product.price;
+    modal.dataset.productId = product.id;
+    
+    modal.classList.remove('hidden');
+}
+
+// Add these to your DOMContentLoaded event listener
+document.addEventListener('DOMContentLoaded', () => {
+    // Edit Product Form Handler
+    const editProductForm = document.getElementById('editProductForm');
+    if (editProductForm) {
+        editProductForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const modal = document.getElementById('editProductModal');
+            const productId = modal.dataset.productId;
+            const name = document.getElementById('editProductName').value;
+            const price = parseFloat(document.getElementById('editProductPrice').value);
+            
+            try {
+                await pb.collection('products').update(productId, {
+                    name,
+                    price
+                });
+                
+                alert('Product updated successfully!');
+                modal.classList.add('hidden');
+                refreshProductList();
+                
+            } catch (error) {
+                console.error('Failed to update product:', error);
+                alert('Failed to update product. Please try again.');
+            }
+        });
+    }
+    
+    // Cancel button handler for product modal
+    document.getElementById('cancelEditProduct')?.addEventListener('click', () => {
+        document.getElementById('editProductModal').classList.add('hidden');
+    });
+});
 
 // Create Company Form Handler
 if (document.getElementById('createCompanyForm')) {
