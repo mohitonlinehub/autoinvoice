@@ -18,6 +18,7 @@ function showView(viewId, username = '') {
             refreshAgentList();
             refreshProductList();
             refreshCompanyList();
+            refreshBankList();
         } else if (viewId === 'agentView') {
             document.getElementById('agentUsername').textContent = username;
         }
@@ -221,5 +222,55 @@ async function refreshCompanyList() {
         
     } catch (error) {
         console.error('Failed to fetch companies:', error);
+    }
+}
+
+// Create Bank Form Handler
+if (document.getElementById('createBankForm')) {
+    document.getElementById('createBankForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('bankName').value;
+        const account = document.getElementById('bankAccount').value;
+        const ifsc = document.getElementById('bankIFSC').value;
+        
+        try {
+            const record = await pb.collection('banks').create({
+                name,
+                account,
+                ifsc
+            });
+            
+            console.log('Bank account added successfully:', record);
+            alert('Bank account added successfully!');
+            
+            e.target.reset();
+            refreshBankList();
+            
+        } catch (error) {
+            console.error('Failed to add bank account:', error);
+            alert('Failed to add bank account. Please try again.');
+        }
+    });
+}
+
+// Function to fetch and display banks
+async function refreshBankList() {
+    try {
+        const records = await pb.collection('banks').getList(1, 50, {
+            sort: '-created'
+        });
+        
+        const bankList = document.getElementById('bankList');
+        bankList.innerHTML = ''; // Clear current list
+        
+        records.items.forEach(bank => {
+            const li = document.createElement('li');
+            li.textContent = `${bank.name} - A/C: ${bank.account} - IFSC: ${bank.ifsc}`;
+            bankList.appendChild(li);
+        });
+        
+    } catch (error) {
+        console.error('Failed to fetch banks:', error);
     }
 }

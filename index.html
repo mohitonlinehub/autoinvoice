@@ -119,6 +119,35 @@
             <h4>Current Companies</h4>
             <ul id="companyList"></ul>
         </div>
+        
+        <!-- Bank Section -->
+        <div class="create-bank-section">
+            <h2>Create new Bank</h2>
+            <form id="createBankForm">
+                <div class="form-group name-group">
+                    <label for="bankName">Bank Name</label>
+                    <input type="text" id="bankName" required>
+                </div>
+                
+                <div class="form-group account-group">
+                    <label for="bankAccount">Account Number</label>
+                    <input type="number" id="bankAccount" required>
+                </div>
+                
+                <div class="form-group ifsc-group">
+                    <label for="bankIFSC">IFSC Code</label>
+                    <input type="text" id="bankIFSC" required>
+                </div>
+                
+                <button type="submit">Add Bank Account</button>
+            </form>
+        </div>
+        
+        <!-- Bank List Section -->
+        <div class="bank-list-section">
+            <h4>Current Banks</h4>
+            <ul id="bankList"></ul>
+        </div>
     </div>
 
     <!-- Agent View -->
