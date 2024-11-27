@@ -272,4 +272,25 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshCompanyList();
         CompanyFormHandler.refreshCompanyList();
     });
+
+    // Set default date to today
+    const invoiceDatePicker = document.getElementById('invoiceDate');
+    if (invoiceDatePicker) {
+        // Set max date to today to prevent future date selection
+        const today = new Date();
+        const maxDate = today.toISOString().split('T')[0];
+        invoiceDatePicker.setAttribute('max', maxDate);
+        
+        // Set default value to today
+        invoiceDatePicker.value = maxDate;
+        
+        // Format the displayed date as YYYY/MM/DD
+        invoiceDatePicker.addEventListener('change', (e) => {
+            const selectedDate = new Date(e.target.value);
+            const formattedDate = selectedDate.toLocaleDateString('en-CA'); // Uses YYYY/MM/DD format
+            console.log('Selected date:', formattedDate);
+            // Store the formatted date for later use
+            invoiceDatePicker.dataset.formattedDate = formattedDate;
+        });
+    }
 });
