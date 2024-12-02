@@ -10,7 +10,144 @@
         <span>Welcome, <span id="adminUsername"></span></span>
         <button id="adminLogoutBtn">Logout</button>
     </div>
-    <h2>Admin Dashboard</h2>
+
+    <div class="admin-container">
+        <!-- Agents Section -->
+        <section class="admin-section">
+            <h2>Manage Agents</h2>
+            
+            <div class="create-agent-section">
+                <h3>Create New Agent</h3>
+                <form id="createAgentForm">
+                    <div class="form-group username-group">
+                        <label for="newAgentUsername">Username</label>
+                        <input type="text" id="newAgentUsername" required>
+                    </div>
+                    <div class="form-group password-group">
+                        <label for="newAgentPassword">Password</label>
+                        <input type="password" id="newAgentPassword" required>
+                    </div>
+                    <button type="submit">Create Agent</button>
+                </form>
+            </div>
+
+            <div class="agent-list-section">
+                <h4>Current Agents</h4>
+                <ul id="agentList"></ul>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section class="admin-section">
+            <h2>Manage Products</h2>
+            
+            <div class="create-product-section">
+                <h3>Create New Product</h3>
+                <form id="createProductForm">
+                    <div class="form-group name-group">
+                        <label for="productName">Name</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group price-group">
+                        <label for="productPrice">Price</label>
+                        <input type="number" id="productPrice" step="0.01" required>
+                    </div>
+                    <button type="submit">Create Product</button>
+                </form>
+            </div>
+
+            <div class="product-list-section">
+                <h4>Current Products</h4>
+                <ul id="productList"></ul>
+            </div>
+        </section>
+
+        <!-- Banks Section -->
+        <section class="admin-section">
+            <h2>Manage Banks</h2>
+            
+            <div class="create-bank-section">
+                <h3>Create New Bank</h3>
+                <form id="createBankForm">
+                    <div class="form-group name-group">
+                        <label for="bankName">Bank Name</label>
+                        <input type="text" id="bankName" required>
+                    </div>
+                    <div class="form-group account-group">
+                        <label for="bankAccount">Account Number</label>
+                        <input type="text" id="bankAccount" required>
+                    </div>
+                    <div class="form-group ifsc-group">
+                        <label for="bankIFSC">IFSC Code</label>
+                        <input type="text" id="bankIFSC" required>
+                    </div>
+                    <button type="submit">Create Bank</button>
+                </form>
+            </div>
+
+            <div class="bank-list-section">
+                <h4>Current Banks</h4>
+                <ul id="bankList"></ul>
+            </div>
+        </section>
+
+        <!-- Companies Section -->
+        <section class="admin-section">
+            <h2>Manage Companies</h2>
+            
+            <div class="create-company-section">
+                <h3>Create New Company</h3>
+                <form id="createCompanyForm">
+                    <div class="form-group name-group">
+                        <label for="companyName">Name</label>
+                        <input type="text" id="companyName" required>
+                    </div>
+
+                    <div class="form-group address-group">
+                        <label for="companyAddress">Address</label>
+                        <textarea id="companyAddress" required></textarea>
+                    </div>
+
+                    <div class="form-group mobile-group">
+                        <label for="companyMobile">Mobile Number</label>
+                        <input type="tel" id="companyMobile" required>
+                    </div>
+
+                    <div class="form-group email-group">
+                        <label for="companyEmail">Email</label>
+                        <input type="email" id="companyEmail" required>
+                    </div>
+
+                    <div class="form-group website-group">
+                        <label for="companyWebsite">Website</label>
+                        <input type="url" id="companyWebsite">
+                    </div>
+
+                    <div class="form-group banks-group">
+                        <label for="companyBanks">Select Banks</label>
+                        <select id="companyBanks" multiple required>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div class="form-group agents-group">
+                        <label for="companyAgents">Select Agents</label>
+                        <select id="companyAgents" multiple required>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+
+                    <button type="submit">Create Company</button>
+                </form>
+            </div>
+
+            <div class="company-list-section">
+                <h4>Current Companies</h4>
+                <ul id="companyList"></ul>
+            </div>
+        </section>
+    </div>
+
     <script type="module" src="./admin.js"></script>
 </body>
 </html>

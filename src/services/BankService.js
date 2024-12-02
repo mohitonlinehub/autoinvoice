@@ -1,8 +1,12 @@
 import { pb } from '../pocketbase';
 
 export class BankService {
-    static async createBank(name, account, ifsc) {
-        return await pb.collection('banks').create({ name, account, ifsc });
+    static async createBank(data) {
+        return await pb.collection('banks').create({
+            name: data.name,
+            account: data.account,
+            ifsc: data.ifsc
+        });
     }
     
     static async updateBank(id, data) {

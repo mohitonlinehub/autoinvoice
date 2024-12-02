@@ -1,11 +1,11 @@
 import { pb } from '../pocketbase';
 
 export class AgentService {
-    static async createAgent(username, password) {
+    static async createAgent(data) {
         return await pb.collection('users').create({
-            username,
-            password,
-            passwordConfirm: password,
+            username: data.username,
+            password: data.password,
+            passwordConfirm: data.password,
             role: "agent"
         });
     }
