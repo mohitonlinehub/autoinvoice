@@ -269,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshAgentList();
         refreshProductList();
         refreshBankList();
-        refreshCompanyList();
         CompanyFormHandler.refreshCompanyList();
     });
 
@@ -293,4 +292,34 @@ document.addEventListener('DOMContentLoaded', () => {
             invoiceDatePicker.dataset.formattedDate = formattedDate;
         });
     }
+
+    // Populate company dropdown when agent view is shown
+    document.addEventListener('viewChanged', async (e) => {
+        if (e.detail.view === 'agentView') {
+            await populateCompanyDropdown();
+        }
+    });
 });
+
+async function populateCompanyDropdown() {
+    const companySelect = document.getElementById('companySelect');
+    if (!companySelect) return;
+
+    try {
+        const result = await CompanyService.getAssignedCompanies();
+        
+        // Clear existing options except the first default option
+        while (companySelect.options.length > 1) {
+            companySelect.remove(1);
+        }
+
+        // Add companies to dropdown
+        result.items.forEach(company => {
+            const option = new Option(company.name, company.id);
+            companySelect.add(option);
+        });
+    } catch (error) {
+        console.error('Failed to load companies:', error);
+        alert('Failed to load assigned companies. Please try again.');
+    }
+}

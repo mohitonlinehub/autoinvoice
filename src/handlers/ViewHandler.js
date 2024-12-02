@@ -16,4 +16,9 @@ export function showView(viewId, username = '') {
             document.getElementById('agentUsername').textContent = username;
         }
     }
+
+    // Dispatch custom event for view change
+    document.dispatchEvent(new CustomEvent('viewChanged', {
+        detail: { view: viewId }
+    }));
 } 

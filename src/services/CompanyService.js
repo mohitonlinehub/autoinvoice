@@ -28,4 +28,13 @@ export class CompanyService {
             expand: 'banks,products,agents'
         });
     }
+    
+    static async getAssignedCompanies() {
+        const currentUser = pb.authStore.model;
+        return await pb.collection('companies').getList(1, 50, {
+            filter: `agents ~ "${currentUser.id}"`,
+            sort: 'name',
+            expand: 'banks,products'
+        });
+    }
 } 
