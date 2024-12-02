@@ -10,7 +10,23 @@
         <span>Welcome, <span id="agentUsername"></span></span>
         <button id="agentLogoutBtn">Logout</button>
     </div>
+    
     <h2>Agent Dashboard</h2>
+    
+    <div class="form-group">
+        <label for="assignedCompanies">Select Company</label>
+        <select id="assignedCompanies">
+            <!-- Options will be populated dynamically -->
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="fileUpload">Upload Excel File</label>
+        <input type="file" id="fileUpload" accept=".xls,.xlsx">
+    </div>
+
+    <!-- SheetJS CDN -->
+    <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     <script type="module" src="./agent.js"></script>
 </body>
 </html>
