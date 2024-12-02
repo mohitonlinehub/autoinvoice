@@ -1,6 +1,7 @@
 import { AuthService } from '../../services/AuthService.js';
 import { CompanyService } from '../../services/CompanyService.js';
 import { ExcelParserService } from '../../services/ExcelParserService.js';
+import { InvoiceService } from '../../services/InvoiceService.js';
 
 class AgentDashboard {
     constructor() {
@@ -71,7 +72,39 @@ class AgentDashboard {
             try {
                 console.log('Processing file:', file.name);
                 const entries = await ExcelParserService.parseExcelFile(file);
-                console.log('Parsed entries:', entries);
+                console.log(`Parsed ${entries.length} entries`);
+
+                const currentUser = AuthService.getCurrentUser();
+                let successCount = 0;
+                let failCount = 0;
+
+                for (const entry of entries) {
+                    try {
+                        const invoiceData = {
+                            tran_type: entry.tranType,
+                            tran_id: entry.tranId,
+                            date: entry["Tran Date"],
+                            balance: entry["Balance Amount"],
+                            withdrawal: entry["Withdrawal"],
+                            deposit: entry["Deposit"],
+                            agent: currentUser.username,
+                            company: this.selectedCompanyId
+                        };
+
+                        await InvoiceService.createInvoice(invoiceData);
+                        successCount++;
+                        console.log(`Processed ${successCount} of ${entries.length} entries`);
+                    } catch (error) {
+                        console.error('Failed to save invoice:', error);
+                        failCount++;
+                    }
+                }
+
+                const message = `Processing complete!\nSuccessful: ${successCount}\nFailed: ${failCount}`;
+                console.log(message);
+                alert(message);
+                fileUpload.value = '';
+                
             } catch (error) {
                 console.error('Error processing file:', error);
                 alert('Error processing file: ' + error.message);
