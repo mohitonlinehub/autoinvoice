@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto Invoice</title>
     <link rel="stylesheet" href="/styles.css">
+    <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <!-- Login View -->
@@ -194,6 +195,15 @@
                 <select id="companySelect" required>
                     <option value="">-- Select a Company --</option>
                 </select>
+            </div>
+        </div>
+
+        <div class="file-upload">
+            <div class="form-group">
+                <input type="file" 
+                       id="excelFile" 
+                       accept=".xlsx, .xls" 
+                       disabled>
             </div>
         </div>
     </div>
