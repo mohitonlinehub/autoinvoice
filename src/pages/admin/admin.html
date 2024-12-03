@@ -146,6 +146,27 @@
                 <ul id="companyList"></ul>
             </div>
         </section>
+
+        <!-- Invoices Section -->
+        <section class="admin-section">
+            <h2>Manage Invoices</h2>
+            
+            <div class="view-invoices-section">
+                <h3>View Invoices by Date</h3>
+                <form id="viewInvoicesForm">
+                    <div class="form-group date-group">
+                        <label for="invoiceDate">Select Date</label>
+                        <input type="date" id="invoiceDate" required>
+                    </div>
+                    <button type="submit">View Invoices</button>
+                </form>
+            </div>
+
+            <div class="invoice-list-section">
+                <h4>Invoices</h4>
+                <ul id="invoiceList"></ul>
+            </div>
+        </section>
     </div>
 
     <script type="module" src="./admin.js"></script>

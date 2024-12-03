@@ -121,4 +121,15 @@ export class InvoiceService {
             throw error;
         }
     }
+
+    static async getInvoicesByDate(date) {
+        // Convert date to start and end of day to match the format in database
+        const startDate = date + ' 00:00:00';
+        const endDate = date + ' 23:59:59';
+        
+        return await pb.collection('invoices').getList(1, 50, {
+            filter: `date >= "${startDate}" && date <= "${endDate}"`,
+            sort: 'created'
+        });
+    }
 } 

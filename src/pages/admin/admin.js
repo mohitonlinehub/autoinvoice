@@ -8,6 +8,7 @@ import { ProductListHandler } from '../../handlers/ProductListHandler.js';
 import { BankListHandler } from '../../handlers/BankListHandler.js';
 import { CompanyListHandler } from '../../handlers/CompanyListHandler.js';
 import { FormHandler } from '../../handlers/FormHandler.js';
+import { InvoiceService } from '../../services/InvoiceService.js';
 
 class AdminDashboard {
     constructor() {
@@ -32,6 +33,7 @@ class AdminDashboard {
         });
 
         this.initializeForms();
+        this.initializeInvoiceForm();
     }
 
     initializeForms() {
@@ -82,6 +84,23 @@ class AdminDashboard {
             await CompanyService.createCompany(data);
             console.log('Company created successfully');
             CompanyListHandler.refresh();
+        });
+    }
+
+    initializeInvoiceForm() {
+        FormHandler.initializeCreateForm('viewInvoicesForm', async (form) => {
+            const data = FormHandler.getFormData(form, [
+                { id: 'invoiceDate', name: 'date' }
+            ]);
+            
+            try {
+                console.log('Fetching invoices for date:', data.date);
+                const invoices = await InvoiceService.getInvoicesByDate(data.date);
+                console.log('Invoices found:', invoices);
+            } catch (error) {
+                console.error('Failed to fetch invoices:', error);
+                alert('Failed to fetch invoices. Please try again.');
+            }
         });
     }
 
