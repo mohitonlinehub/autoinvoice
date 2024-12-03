@@ -75,35 +75,33 @@ class AgentDashboard {
                 console.log(`Parsed ${entries.length} entries`);
 
                 const currentUser = AuthService.getCurrentUser();
-                let successCount = 0;
-                let failCount = 0;
+                const invoiceEntries = entries.map(entry => ({
+                    tran_type: entry.tranType,
+                    tran_id: entry.tranId,
+                    date: entry["Tran Date"],
+                    balance: entry["Balance Amount"],
+                    withdrawal: entry["Withdrawal"],
+                    deposit: entry["Deposit"],
+                    agent: currentUser.username,
+                    company: this.selectedCompanyId
+                }));
 
-                for (const entry of entries) {
-                    try {
-                        const invoiceData = {
-                            tran_type: entry.tranType,
-                            tran_id: entry.tranId,
-                            date: entry["Tran Date"],
-                            balance: entry["Balance Amount"],
-                            withdrawal: entry["Withdrawal"],
-                            deposit: entry["Deposit"],
-                            agent: currentUser.username,
-                            company: this.selectedCompanyId
-                        };
-
-                        await InvoiceService.createInvoice(invoiceData);
-                        successCount++;
-                        console.log(`Processed ${successCount} of ${entries.length} entries`);
-                    } catch (error) {
-                        console.error('Failed to save invoice:', error);
-                        failCount++;
-                    }
+                // Show processing status to user
+                const statusDiv = this.createStatusElement();
+                
+                try {
+                    const results = await InvoiceService.createInvoiceBatch(invoiceEntries, 10);
+                    console.log('Processing complete:', results);
+                    
+                    const message = `Processing complete!\nSuccessful: ${results.success}\nSkipped: ${results.skipped}\nFailed: ${results.failed}`;
+                    alert(message);
+                } catch (error) {
+                    console.error('Failed to process entries:', error);
+                    alert('Failed to process entries. Please try again.');
+                } finally {
+                    fileUpload.value = '';
+                    statusDiv.remove();
                 }
-
-                const message = `Processing complete!\nSuccessful: ${successCount}\nFailed: ${failCount}`;
-                console.log(message);
-                alert(message);
-                fileUpload.value = '';
                 
             } catch (error) {
                 console.error('Error processing file:', error);
@@ -111,6 +109,25 @@ class AgentDashboard {
                 fileUpload.value = '';
             }
         });
+    }
+
+    createStatusElement() {
+        const statusDiv = document.createElement('div');
+        statusDiv.style.position = 'fixed';
+        statusDiv.style.top = '20px';
+        statusDiv.style.right = '20px';
+        statusDiv.style.padding = '10px';
+        statusDiv.style.background = '#f0f0f0';
+        statusDiv.style.border = '1px solid #ccc';
+        statusDiv.style.borderRadius = '4px';
+        statusDiv.style.zIndex = '1000';
+        statusDiv.textContent = 'Processing entries...';
+        document.body.appendChild(statusDiv);
+        return statusDiv;
+    }
+
+    updateStatusElement(statusDiv, progress) {
+        statusDiv.textContent = `Processing entries... ${progress}%`;
     }
 }
 
