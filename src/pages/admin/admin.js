@@ -9,6 +9,7 @@ import { BankListHandler } from '../../handlers/BankListHandler.js';
 import { CompanyListHandler } from '../../handlers/CompanyListHandler.js';
 import { FormHandler } from '../../handlers/FormHandler.js';
 import { InvoiceService } from '../../services/InvoiceService.js';
+import { InvoiceListHandler } from '../../handlers/InvoiceListHandler.js';
 
 class AdminDashboard {
     constructor() {
@@ -97,6 +98,15 @@ class AdminDashboard {
                 console.log('Fetching invoices for date:', data.date);
                 const invoices = await InvoiceService.getInvoicesByDate(data.date);
                 console.log('Invoices found:', invoices);
+                
+                // Remove existing PDF button if present
+                const existingBtn = document.getElementById('generatePdfBtn');
+                if (existingBtn) {
+                    existingBtn.remove();
+                }
+
+                // Display invoices in the list
+                await InvoiceListHandler.displayInvoices(invoices);
             } catch (error) {
                 console.error('Failed to fetch invoices:', error);
                 alert('Failed to fetch invoices. Please try again.');
