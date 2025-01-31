@@ -12,6 +12,9 @@
     "vite": "^5.4.10"
   },
   "dependencies": {
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
+    "jszip": "^3.10.1",
     "pocketbase": "^0.21.5"
   }
 }

@@ -1,4 +1,5 @@
 import { BaseListHandler } from './BaseListHandler.js';
+import { PdfService } from '../services/PdfService.js';
 
 export class InvoiceListHandler extends BaseListHandler {
     static async displayInvoices(invoices) {
@@ -45,11 +46,22 @@ export class InvoiceListHandler extends BaseListHandler {
         if (invoiceItems.length) {
             const generatePdfBtn = document.createElement('button');
             generatePdfBtn.id = 'generatePdfBtn';
-            generatePdfBtn.textContent = 'Generate PDF';
+            generatePdfBtn.textContent = 'Download Invoices';
             generatePdfBtn.className = 'generate-pdf-btn';
-            generatePdfBtn.onclick = () => {
-                // This will be implemented in the next step
-                console.log('Generate PDF clicked for invoices:', invoiceItems);
+            generatePdfBtn.onclick = async () => {
+                try {
+                    generatePdfBtn.disabled = true;
+                    generatePdfBtn.textContent = 'Generating...';
+                    
+                    await PdfService.generateInvoiceZip(invoiceItems);
+                    
+                    generatePdfBtn.textContent = 'Download Invoices';
+                } catch (error) {
+                    console.error('Failed to generate PDFs:', error);
+                    alert('Failed to generate PDFs. Please try again.');
+                } finally {
+                    generatePdfBtn.disabled = false;
+                }
             };
             listElement.after(generatePdfBtn);
         }

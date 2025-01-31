@@ -123,13 +123,34 @@ export class InvoiceService {
     }
 
     static async getInvoicesByDate(date) {
-        // Convert date to start and end of day to match the format in database
-        const startDate = date + ' 00:00:00';
-        const endDate = date + ' 23:59:59';
-        
-        return await pb.collection('invoices').getList(1, 50, {
-            filter: `date >= "${startDate}" && date <= "${endDate}"`,
-            sort: 'created'
-        });
+        try {
+            console.log('Fetching invoices for date:', date);
+            
+            // First get total count with proper date filtering
+            const firstPage = await pb.collection('invoices').getList(1, 1, {
+                filter: `date ~ "${date}"`, // Changed from = to ~ for partial match
+                sort: 'created'
+            });
+            
+            console.log('Total items found:', firstPage.totalItems);
+            
+            // If no records, return empty array
+            if (firstPage.totalItems === 0) {
+                return { items: [] };
+            }
+            
+            // Fetch all records in one request
+            const allInvoices = await pb.collection('invoices').getList(1, firstPage.totalItems, {
+                filter: `date ~ "${date}"`, // Keep the same filter
+                sort: 'created'
+            });
+            
+            console.log('Fetched invoices:', allInvoices.items.length);
+            return allInvoices;
+            
+        } catch (error) {
+            console.error('Error fetching invoices:', error);
+            throw error;
+        }
     }
 } 
